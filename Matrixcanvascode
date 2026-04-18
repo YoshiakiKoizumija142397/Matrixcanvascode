@@ -1,0 +1,46 @@
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+// 画面サイズに合わせる
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// 使用する文字（カタカナや英数字）
+const letters = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890".split("");
+
+const fontSize = 16;
+const columns = canvas.width / fontSize; // 列数
+
+// 各列の現在の落下位置(Y座標)を保持する配列
+const drops = Array.from({ length: columns }).fill(1);
+
+function draw() {
+  // 背景を薄い黒で塗りつぶして「残像」を作る
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // 文字のスタイル設定
+  ctx.fillStyle = "#0F0"; // 緑色
+  ctx.font = fontSize + "px monospace";
+
+  // 各列の文字を描画
+  for (let i = 0; i < drops.length; i++) {
+    const text = letters[Math.floor(Math.random() * letters.length)];
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+    // 画面下まで来たら、ランダムな確率で一番上に戻す
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+    drops[i]++;
+  }
+}
+
+// 50ミリ秒ごとに描画（requestAnimationFrameを使うとなお滑らかになります）
+setInterval(draw, 50);
+
+// ウィンドウリサイズ対応
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});

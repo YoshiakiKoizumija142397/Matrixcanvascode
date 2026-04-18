@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrix Canvas</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <script>
+    // Canvas setup
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
 
+    // Resize canvas to fit the screen
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Characters to display in the matrix
+    const characters = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZあいうえおカキクケコサシスセソタチツテトナニヌネノ';
+    const charArray = characters.split('');
+    const fontSize = 16; // Font size for Matrix effect
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = new Array(columns).fill(0); // Initialize drop positions
+
+    // Draw function
+    function drawMatrix() {
+      // Fade-out effect - draw a translucent black rectangle over the entire canvas
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Set font settings
+      ctx.fillStyle = '#0F0'; // Green color
+      ctx.font = `${fontSize}px monospace`;
+
+      // Loop through columns
+      for (let i = 0; i < drops.length; i++) {
+        const char = charArray[Math.floor(Math.random() * charArray.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+        // Randomly reset drop position if it goes off screen
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        // Increment Y position
+        drops[i]++;
+      }
+    }
+
+    // Update canvas size on window resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drops.length = Math.floor(canvas.width / fontSize);
+      drops.fill(0); // Reset drop positions
+    });
+
+    // Animate the matrix effect
+    setInterval(drawMatrix, 50);
+  </script>
+</body>
+</html>
